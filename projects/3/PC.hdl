@@ -13,5 +13,15 @@ CHIP PC {
     OUT out[16];
     
     PARTS:
-    //// Replace this comment with your code.
+    // Compute out + 1
+    Inc16(in=outReg, out=incOut);
+    
+    // Choose next value based on control signals
+    // Priority: reset > load > inc > hold
+    Mux16(a=outReg, b=incOut, sel=inc, out=incOrHold);
+    Mux16(a=incOrHold, b=in, sel=load, out=loadOrIncOrHold);
+    Mux16(a=loadOrIncOrHold, b=false, sel=reset, out=nextValue);
+    
+    // Register the value
+    Register(in=nextValue, load=true, out=out, out=outReg);
 }
