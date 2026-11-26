@@ -31,5 +31,73 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-	//// Replace this comment with your code.
+
+/*
+
+
+i xx a cccccc ddd jjj
+
+i:
+0 -> A Instruction
+1 -> C Instruction
+
+xx:
+11
+
+a:
+0 -> A
+1 -> M
+
+  c  c  c  c  c  c
+ zx nx zy ny  f no
+
+ddd:
+000 -> do not store
+001 -> M
+010 -> D
+011 -> DM
+100 -> A
+101 -> AM
+110 -> AD
+111 -> ADM
+
+jjj:
+<=>
+000 ->            not jump
+001 ->  out > 0 ? jump : not
+010 -> out == 0 ? jump : not
+011 -> out >= 0 ? jump : not
+100 ->  out < 0 ? jump : not
+101 -> out != 0 ? jump : not
+110 -> out <= 0 ? jump : not
+111 ->            just jump
+   
+
+
+
+*/
+
+    And(a=instruction[15], b=true, out=cins);
+    Not(in=cins, out=ains);
+
+    And(a=instruction[12], b=true, out=calcm);
+    Not(in=calcm, out=calcr);
+
+    And(a=instruction[11], b=true, out=zx);
+    And(a=instruction[10], b=true, out=nx);
+    And(a=instruction[9], b=true, out=zy);
+    And(a=instruction[8], b=true, out=ny);
+    And(a=instruction[7], b=true, out=f);
+    And(a=instruction[6], b=true, out=no);
+
+    And(a=instruction[5], b=true, out=storea);
+    And(a=instruction[4], b=true, out=stored);
+    And(a=instruction[3], b=true, out=storem);
+
+
+    Register(in=in, load=load, out=out); // Address Register
+    Register(in=in, load=load, out=out); // Data Register
+    ALU(x=, y=, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=, zr=zr, ng=ng);
+
+    PC(in=in, load=load, inc=increment, reset=reset, out=out);
 }
